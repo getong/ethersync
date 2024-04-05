@@ -32,11 +32,7 @@ enum Commands {
 
 #[tokio::main]
 async fn main() -> io::Result<()> {
-    let subscriber = FmtSubscriber::builder()
-        .with_max_level(tracing::Level::DEBUG)
-        .finish();
-    tracing::subscriber::set_global_default(subscriber)
-        .expect("Setting default log subscriber failed");
+    console_subscriber::init();
 
     let cli = Cli::parse();
 
