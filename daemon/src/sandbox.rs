@@ -2,7 +2,7 @@
 //! The functions in this module are supposed to prevent file I/O outside the base directory.
 //! All our file I/O should go through them.
 
-use anyhow::{bail, Result};
+use anyhow::{bail, Context, Result};
 use ignore::WalkBuilder;
 use path_clean::PathClean;
 use std::fs::{self, OpenOptions};
@@ -158,7 +158,9 @@ fn absolute_and_canonicalized(path: &Path) -> Result<PathBuf> {
         }
     }
 
-    let mut canonical_path = prefix_path.canonicalize().expect("Could not canonicalize");
+    let mut canonical_path = prefix_path
+        .canonicalize()
+        .with_context(|| format!("Failed to canonicalize path {:?}", path))?;
     if suffix_path.components().count() != 0 {
         canonical_path = canonical_path.join(suffix_path);
     }
